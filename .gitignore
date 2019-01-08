@@ -1,0 +1,12 @@
+*.swp
+*.tmp
+/bin
+/pkg
+nohup.out
+*.log
+*.retry
+t.go
+app_p*
+.idea
+.cache/
+logs/
