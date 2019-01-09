@@ -1,15 +1,7 @@
 package nacos_go_client
 
 import (
-	"code.jiecaojingxuan.com/gobase/httpclient"
-	"code.jiecaojingxuan.com/gobase/logkit"
-	"crypto/md5"
-	"fmt"
-	"github.com/BurntSushi/toml"
-	"io"
-	"net/http"
 	"testing"
-	"time"
 )
 
 func TestConf(t *testing.T) {
@@ -133,35 +125,4 @@ type Achieve struct {
 type Product struct {
 	TemplatePath string `toml:"path"`
 	TemplateName string `toml:"name"`
-}
-
-func ttt(addr, dataId, group string, conf interface{}) error {
-	c := httpclient.NewClient(&http.Client{
-		Timeout: 30 * time.Second,
-	})
-
-	url := fmt.Sprintf("%s/nacos/v1/cs/configs?dataId=%s&group=%s", addr, dataId, group)
-	resp := c.Get(url)
-
-	str, err := resp.ToString()
-	if err != nil {
-		logkit.Errorf("NacosConfigRegister url:%s err:%s", url, err)
-		return err
-	}
-
-	if str == "" {
-		logkit.Errorf("NacosConfigRegister url:%s err:str is nil", url)
-		return nil
-	}
-
-	_, err = toml.Decode(str, conf)
-	if err != nil {
-		logkit.Errorf("NacosConfigRegister url:%s err:%s", url, err)
-		return nil
-	}
-
-	w := md5.New()
-	io.WriteString(w, str)
-	contentMd5 = fmt.Sprintf("%x", w.Sum(nil))
-	return nil
 }

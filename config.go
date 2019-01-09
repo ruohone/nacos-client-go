@@ -2,11 +2,10 @@ package nacos_go_client
 
 import (
 	"bytes"
-	"code.jiecaojingxuan.com/gobase/httpclient"
-	"code.jiecaojingxuan.com/gobase/logkit"
 	"crypto/md5"
 	"fmt"
 	"github.com/BurntSushi/toml"
+	"github.com/ruohone/nacos-client-go/httpproxy"
 	"io"
 	"net/http"
 	"net/url"
@@ -41,7 +40,6 @@ func NacosConfigRegister(addr, dataId, group string, conf interface{}) error {
 }
 
 func nacosConfigListen(addr, dataId, group string, conf interface{}, ch chan int) {
-	logkit.Infof("listen")
 	content := bytes.Buffer{}
 	content.WriteString(dataId)
 	content.WriteString("%02")
@@ -53,7 +51,7 @@ func nacosConfigListen(addr, dataId, group string, conf interface{}, ch chan int
 	v := url.Values{}
 	v.Add("Listening-Configs", content.String())
 
-	c := httpclient.NewClient(&http.Client{
+	c := httpproxy.NewClient(&http.Client{
 		Timeout: time.Second * 30,
 	})
 
@@ -68,13 +66,13 @@ func nacosConfigListen(addr, dataId, group string, conf interface{}, ch chan int
 	resp := reqCli.Execute()
 	str, err := resp.ToString()
 	if err != nil {
-		logkit.Errorf("NacosConfigRegister resp str:%s err:%s", str, err)
+		fmt.Println(fmt.Sprintf("NacosConfigRegister resp str:%s err:%s", str, err))
 		ch <- 0
 		return
 	}
 
 	if str == "" {
-		logkit.Debugf("NacosConfigRegister resp str:%s err: str is nil", str)
+		fmt.Println(fmt.Sprintf("NacosConfigRegister resp str:%s err: str is nil", str))
 		ch <- 1
 		return
 	}
@@ -82,7 +80,7 @@ func nacosConfigListen(addr, dataId, group string, conf interface{}, ch chan int
 	str = strings.Split(str, "%01")[0]
 	strArr := strings.Split(str, "%02")
 	if len(strArr) < 2 {
-		logkit.Debugf("NacosConfigRegister response format err: str = %s", str)
+		fmt.Println(fmt.Sprintf("NacosConfigRegister response format err: str = %s", str))
 		ch <- 1
 		return
 	}
@@ -95,7 +93,7 @@ func nacosConfigListen(addr, dataId, group string, conf interface{}, ch chan int
 }
 
 func nacosUpdateConfig(addr, dataId, group string, conf interface{}) error {
-	c := httpclient.NewClient(&http.Client{
+	c := httpproxy.NewClient(&http.Client{
 		Timeout: 30 * time.Second,
 	})
 
@@ -104,18 +102,18 @@ func nacosUpdateConfig(addr, dataId, group string, conf interface{}) error {
 
 	str, err := resp.ToString()
 	if err != nil {
-		logkit.Errorf("NacosConfigRegister url:%s err:%s", url, err)
+		fmt.Println(fmt.Sprintf("NacosConfigRegister url:%s err:%s", url, err))
 		return err
 	}
 
 	if str == "" {
-		logkit.Errorf("NacosConfigRegister url:%s err:str is nil", url)
+		fmt.Println(fmt.Sprintf("NacosConfigRegister url:%s err:str is nil", url))
 		return nil
 	}
 
 	_, err = toml.Decode(str, conf)
 	if err != nil {
-		logkit.Errorf("NacosConfigRegister url:%s err:%s", url, err)
+		fmt.Println(fmt.Sprintf("NacosConfigRegister url:%s err:%s", url, err))
 		return nil
 	}
 
@@ -133,7 +131,7 @@ func UpdateConfig(addr, dataId, group string, conf interface{}) error {
 		return err
 	}
 
-	cli := httpclient.NewClient(&http.Client{
+	cli := httpproxy.NewClient(&http.Client{
 		Timeout: 30 * time.Second,
 	})
 

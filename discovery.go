@@ -1,10 +1,9 @@
 package nacos_go_client
 
 import (
-	"code.jiecaojingxuan.com/gobase/httpclient"
-	"code.jiecaojingxuan.com/gobase/logkit"
 	"encoding/json"
 	"fmt"
+	"github.com/ruohone/nacos-client-go/httpproxy"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -43,7 +42,7 @@ type DiscoveryServiceInfo struct {
 }
 
 func DiscoveryService(addr, dom, clientIp, checksum, udpPort, env, clusters string) {
-	c := httpclient.NewClient(&http.Client{
+	c := httpproxy.NewClient(&http.Client{
 		Timeout: time.Second * 30,
 	})
 
@@ -54,15 +53,15 @@ func DiscoveryService(addr, dom, clientIp, checksum, udpPort, env, clusters stri
 	values.Add("udpPort", udpPort)
 	values.Add("env", env)
 	values.Add("clusters", clusters)
-	values.Add("allIPs",strconv.FormatBool(true))
+	values.Add("allIPs", strconv.FormatBool(true))
 
 	resp := c.Get(fmt.Sprintf("%s/nacos/v1/ns/api/srvIPXT?%s", addr, values.Encode()))
 
 	str, err := resp.ToString()
 	if err != nil {
-		logkit.Errorf("discovery service err:%s", err)
+		fmt.Println(fmt.Sprintf("discovery service err:%s", err))
 	}
-	logkit.Info(str)
+	fmt.Println(fmt.Sprintf(str))
 
 	si := processService(str)
 	fmt.Println(si)
@@ -72,7 +71,7 @@ func processService(j string) *DiscoveryServiceInfo {
 	si := &DiscoveryServiceInfo{}
 	err := json.Unmarshal([]byte(j), si)
 	if err != nil {
-		logkit.Errorf("process service json parse err:%s", err)
+		fmt.Println(fmt.Sprintf("process service json parse err:%s", err))
 		return si
 	}
 	serviceInfoMap[getKey(si)] = si

@@ -2,10 +2,10 @@ package nacos_go_client
 
 import (
 	"bytes"
-	"code.jiecaojingxuan.com/gobase/httpclient"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/ruohone/nacos-client-go/httpproxy"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -149,7 +149,7 @@ func clientBeat(info BeatInfo, addr string) (int, error) {
 	values.Add("encoding", "UTF-8")
 	values.Add("dom", info.Dom)
 
-	c := httpclient.NewClient(&http.Client{
+	c := httpproxy.NewClient(&http.Client{
 		Timeout: 30 * time.Second,
 	})
 
