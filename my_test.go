@@ -7,11 +7,11 @@ import (
 func TestConf(t *testing.T) {
 	//c := &config{}
 	//
-	//NacosConfigRegister("http://10.210.29.210:8848", "test.toml", "DEFAULT_GROUP", &c)
+	//NacosConfigRegister("http://localhost:8848", "test.toml", "DEFAULT_GROUP", &c)
 	//
 	//c.Taskurl = "hehrerer"
 	//
-	//err := UpdateConfig("http://demo.nacos.qiangshouapp.com:8848", "testgg", "DEFAULT_GROUP", c)
+	//err := UpdateConfig("http://localhost:8848", "testgg", "DEFAULT_GROUP", c)
 	//
 	//logkit.Error(err.Error())
 	//
