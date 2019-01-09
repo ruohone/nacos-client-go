@@ -1,3 +1,5 @@
+![](https://img.shields.io/badge/nacos--client-go-yellowgreen.svg)
+
 获取和获取配置，目前只支持toml格式
 NacosConfigRegister(addr, dataId, group, &conf)
 
