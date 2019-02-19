@@ -28,7 +28,7 @@ type HealthChecker struct {
 }
 
 type Metadata struct {
-	Name string
+	Name1 string `json:"name1"`
 }
 
 type ServiceInfo struct {
@@ -78,7 +78,6 @@ func NacosServiceRegister(serInfo ServiceInfo, addr string) error {
 }
 
 func registerService(serInfo ServiceInfo, addr string) error {
-
 	cluster, err := json.Marshal(serInfo.Cluster)
 	if err != nil {
 		return err
@@ -149,11 +148,7 @@ func clientBeat(info BeatInfo, addr string) (int, error) {
 	values.Add("encoding", "UTF-8")
 	values.Add("dom", info.Dom)
 
-	c := httpproxy.NewClient(&http.Client{
-		Timeout: 30 * time.Second,
-	})
-
-	r := c.NewRequest()
+	r := httpproxy.NewRequest()
 	r.WithHeader("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8")
 	req := r.Get(fmt.Sprintf("%s/nacos/v1/ns/api/clientBeat?%s", addr, values.Encode()))
 	resp := req.Execute()
